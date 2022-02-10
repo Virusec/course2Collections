@@ -6,17 +6,15 @@ import pro.sky.course2collections.exception.EmployeeExistsException;
 import pro.sky.course2collections.exception.EmployeeNotFoundException;
 import pro.sky.course2collections.service.EmployeeService;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final Set<Employee> employees;
+    private final Map<String, Employee> employees;
 
     public EmployeeServiceImpl() {
-        employees = new HashSet<>();
+        employees = new LinkedHashMap<>();
     }
 
     @Override
@@ -27,9 +25,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee add(Employee employee) {
-        if (!employees.add(employee)) {
+        String key = getKey(employee);
+
+        if (employees.containsKey(key)) {
             throw new EmployeeExistsException();
         }
+        employees.put(key, employee);
         return employee;
     }
 
@@ -41,7 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee remove(Employee employee) {
-        if (!employees.remove(employee)) {
+        Employee deletedValue = employees.remove(getKey(employee));
+        if (deletedValue == null) {
             throw new EmployeeNotFoundException();
         }
         return employee;
@@ -49,8 +51,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee find(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
-        if (!employees.contains(employee)) {
+        String key = getKey(firstName, lastName);
+        Employee employee = employees.get(key);
+        if (employee == null) {
             throw new EmployeeNotFoundException();
         }
         return employee;
@@ -58,7 +61,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Collection<Employee> getAll() {
-        return Set.copyOf(employees);
+        return Set.copyOf(employees.values());
+    }
+
+    private String getKey(Employee employee) {
+        return getKey(employee.getFirstName(), employee.getLastName());
+    }
+
+    private String getKey(String firstName, String lastName) {
+        return firstName + "_" + lastName;
     }
 
 }

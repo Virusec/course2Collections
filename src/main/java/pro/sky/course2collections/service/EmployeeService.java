@@ -3,7 +3,7 @@ package pro.sky.course2collections.service;
 import pro.sky.course2collections.data.Employee;
 
 import java.util.Collection;
-import java.util.List;
+
 
 public interface EmployeeService {
 
