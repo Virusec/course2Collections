@@ -8,11 +8,11 @@ import pro.sky.course2collections.data.Employee;
 import pro.sky.course2collections.service.EmployeeService;
 
 import java.util.Collection;
-import java.util.List;
+
 
 @RestController
+@RequestMapping("/employee")
 public class EmployeeController {
-
 
     private final EmployeeService employeeService;
 
